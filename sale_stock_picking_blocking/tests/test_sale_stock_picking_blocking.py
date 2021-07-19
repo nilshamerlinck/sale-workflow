@@ -66,7 +66,7 @@ class TestSaleDeliveryBlock(common.TransactionCase):
     def test_no_block(self):
         """Tests if normal behaviour without block."""
         so = self.sale_order
-        so.action_confirm()
+        so.with_context(bypass_reservation_update=True).action_confirm()
         pick = self._picking_comp(so)
         self.assertNotEqual(pick, 0, "A delivery should have been made")
 
@@ -77,7 +77,7 @@ class TestSaleDeliveryBlock(common.TransactionCase):
         )
         so = self.sale_order
         so.write({"delivery_block_id": block_reason.id})
-        so.action_confirm()
+        so.with_context(bypass_reservation_update=True).action_confirm()
         self._picking_comp(so)
         pick = self._picking_comp(so)
         self.assertEqual(pick, 0, "The delivery should have been blocked")
