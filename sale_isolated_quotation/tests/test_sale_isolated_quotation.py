@@ -7,6 +7,8 @@ from odoo.tests.common import TransactionCase
 
 from ..hooks import uninstall_hook
 
+import logging
+_logger = logging.getLogger('SEQUENCE')
 
 class TestSaleIsolatedQuotation(TransactionCase):
     def test_quotation_convert_to_order(self):
@@ -16,6 +18,9 @@ class TestSaleIsolatedQuotation(TransactionCase):
           - New sale.order of order_sequence = True created
         - Quotation can refer to Order and Order can refer to Quotation
         """
+        seqs = self.env['ir.sequence'].search([('code', 'in', ('sale.quotation', 'sale.order'))])
+        for s in seqs: _logger.info('next %s (%s): %s', s.code, s.id, s.number_next_actual)
+
         self.quotation.action_convert_to_order()
         self.assertEqual(self.quotation.state, "done")
         self.sale_order = self.quotation.order_id

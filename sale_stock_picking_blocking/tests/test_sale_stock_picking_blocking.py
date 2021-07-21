@@ -4,6 +4,9 @@
 from odoo.exceptions import ValidationError
 from odoo.tests import common
 
+import logging
+_logger = logging.getLogger('SEQUENCE')
+
 
 class TestSaleDeliveryBlock(common.TransactionCase):
     def setUp(self):
@@ -45,6 +48,9 @@ class TestSaleDeliveryBlock(common.TransactionCase):
         self.sale_order_line = self.sol_model.create(sol_dict)
 
     def test_check_auto_done(self):
+        seqs = self.env['ir.sequence'].search([('code', 'in', ('sale.quotation', 'sale.order'))])
+        for s in seqs: _logger.info('next %s (%s): %s', s.code, s.id, s.number_next_actual)
+
         # Set active auto done configuration
         config = self.env["res.config.settings"].create(
             {"group_auto_done_setting": True}
@@ -64,6 +70,9 @@ class TestSaleDeliveryBlock(common.TransactionCase):
         return count
 
     def test_no_block(self):
+        seqs = self.env['ir.sequence'].search([('code', 'in', ('sale.quotation', 'sale.order'))])
+        for s in seqs: _logger.info('next %s (%s): %s', s.code, s.id, s.number_next_actual)
+
         """Tests if normal behaviour without block."""
         so = self.sale_order
         so.action_confirm()

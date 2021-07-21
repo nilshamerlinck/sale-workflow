@@ -7,6 +7,9 @@ from odoo.tests.common import Form
 
 from .common import CommonCase
 
+import logging
+_logger = logging.getLogger('SEQUENCE')
+
 
 class TestSaleOrderCase(CommonCase):
     @classmethod
@@ -21,6 +24,9 @@ class TestSaleOrderCase(CommonCase):
         )
 
     def test_create(self):
+        seqs = self.env['ir.sequence'].search([('code', 'in', ('sale.quotation', 'sale.order'))])
+        for s in seqs: _logger.info('next %s: %s', s.code, s.number_next_actual)
+
         self.assertRecordValues(
             self.order,
             [

@@ -4,6 +4,9 @@
 from odoo.exceptions import UserError
 from odoo.tests.common import TransactionCase
 
+import logging
+_logger = logging.getLogger('SEQUENCE')
+
 
 class TestSaleOrder(TransactionCase):
     def setUp(self, *args, **kwargs):
@@ -13,6 +16,9 @@ class TestSaleOrder(TransactionCase):
         company.keep_name_so = False
 
     def test_enumeration(self):
+        seqs = self.env['ir.sequence'].search([('code', 'in', ('sale.quotation', 'sale.order'))])
+        for s in seqs: _logger.info('next %s (%s): %s', s.code, s.id, s.number_next_actual)
+
         order1 = self.sale_order_model.create(
             {"partner_id": self.env.ref("base.res_partner_1").id}
         )
