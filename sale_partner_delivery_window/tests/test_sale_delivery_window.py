@@ -121,6 +121,20 @@ class TestSaleDeliveryWindow(SavepointCase):
 
     @freeze_time("2020-03-24 01:00:00")  # Tuesday
     def test_prepare_procurement_values(self):
+        # if module sale_commitment_date_mandatory is installed,
+        # commitment_date is mandatory and a default value will
+        # be set on sale order creation
+        # this test checks the case where commitment_date is not set,
+        # so we only run it when sale_commitment_date_mandatory
+        # is not installed
+        module_installed = self.env["ir.module.module"].search(
+            [
+                ("name", "=", "sale_commitment_date_mandatory"),
+                ("state", "=", "installed"),
+            ]
+        )
+        if module_installed:
+            return
         # Without setting a commitment date, picking is scheduled for next
         #  preferred delivery window start time
         order = self._create_order()
